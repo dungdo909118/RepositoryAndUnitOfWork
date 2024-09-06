@@ -1,0 +1,6 @@
+@OM.API_HostAddress = http://localhost:7039
+
+GET {{OM.API_HostAddress}}/product/
+Accept: application/json
+
+###
