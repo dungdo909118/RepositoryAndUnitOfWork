@@ -13,7 +13,7 @@ namespace OM.Data.Repository.Implements
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        protected readonly DbSet<T> _dbSet;
+        private readonly DbSet<T> _dbSet;
         private readonly OMDBContext _oMDBContext;
         public Repository(OMDBContext oMDBContext)
         {
@@ -21,31 +21,31 @@ namespace OM.Data.Repository.Implements
             _oMDBContext = oMDBContext;
         }
 
-        public async Task<bool> DeleteAsync(T entity)
+        public virtual async Task<bool> DeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
             await _oMDBContext.SaveChangesAsync();
             return true;
         }
 
-        public async Task<IEnumerable<T>> GetAsync(int pageIndex, int pageSize)
+        public virtual async Task<IEnumerable<T>> GetAsync(int pageIndex, int pageSize)
         {
             return await _dbSet.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        public virtual async Task<T?> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task<T> InsertAsync(T entity)
+        public virtual async Task<T> InsertAsync(T entity)
         {
             var result = await _dbSet.AddAsync(entity);
             await _oMDBContext.SaveChangesAsync();
             return entity;
         }
 
-        public async Task<T> UpdateAsync(T entity)
+        public virtual async Task<T> UpdateAsync(T entity)
         {
             _dbSet.Attach(entity);
             _oMDBContext.Entry(entity).State = EntityState.Modified;

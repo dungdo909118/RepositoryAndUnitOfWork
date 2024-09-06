@@ -59,6 +59,7 @@ namespace OM.Business.Order
                     {
                         var orderDetailResult = await _unitOfWork.OrderDetail.InsertAsync(item);
                         await _unitOfWork.SaveChangesAsync();
+                        throw new Exception("Data not valid");
                     }
 
                     await _unitOfWork.CommitAsync();

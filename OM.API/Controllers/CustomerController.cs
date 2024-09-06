@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OM.Business.Customer;
+using OM.Business.Models;
+using OM.Core.CustomeErrors;
 
 namespace OM.API.Controllers
 {
@@ -20,11 +22,11 @@ namespace OM.API.Controllers
             try
             {
                 var products = await _customerBo.GetAll(pageIndex, pageSize);
-                return Ok(products);
+                return Ok(new DataApiResponse<IEnumerable<CustomerModel>>() { Data = products, Success = true, Message = "" });
             }
             catch (Exception)
             {
-                return NotFound();
+                throw new CustomeNotFoundException("Data not found.");
             }
         }
     }

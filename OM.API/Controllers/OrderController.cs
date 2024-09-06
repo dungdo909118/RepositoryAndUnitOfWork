@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using OM.Business.Models;
 using OM.Business.Order;
 using OM.Business.Product;
+using OM.Core.CustomeErrors;
 
 namespace OM.API.Controllers
 {
@@ -11,9 +13,11 @@ namespace OM.API.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderBo _orderBo;
-        public OrderController(IOrderBo orderBo)
+        private readonly ILogger<OrderController> _logger;
+        public OrderController(IOrderBo orderBo, ILogger<OrderController> logger)
         {
             _orderBo = orderBo;
+            _logger = logger;   
         }
 
         [HttpGet("Get", Name = "Order")]
@@ -22,11 +26,12 @@ namespace OM.API.Controllers
             try
             {
                 var products = await _orderBo.GetAll(pageIndex, pageSize);
-                return Ok(products);
+                return Ok(new DataApiResponse<IEnumerable<OrderModel>>() { Data = products, Success = true, Message =""});
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return NotFound();
+                _logger.LogWarning(ex.Message);
+                throw new CustomeNotFoundException("Data not found.");
             }
         }
 
@@ -37,11 +42,12 @@ namespace OM.API.Controllers
             {
                 if (model == null) return NotFound();
                 var products = await _orderBo.Create(model);
-                return Ok(products);
+                return Ok(new DataApiResponse<object>() { Data = products, Success = true, Message = "" }); ;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return NotFound();
+                _logger.LogWarning(ex.Message);
+                throw new CustomeNotFoundException(ex.Message);
             }
         }
     }

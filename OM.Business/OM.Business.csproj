@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\OM.Core\OM.Core.csproj" />
     <ProjectReference Include="..\OM.Data\OM.Data.csproj" />
   </ItemGroup>
