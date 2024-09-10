@@ -26,17 +26,21 @@ namespace OM.API.Controllers
             try
             {
                 var products = await _orderBo.GetAll(pageIndex, pageSize);
+
+                if(products == null) {
+                    return Ok(new DataApiResponse<IEnumerable<OrderModel>>() { Success = true, Message = "Data not found" });
+                }
                 return Ok(new DataApiResponse<IEnumerable<OrderModel>>() { Data = products, Success = true, Message =""});
             }
             catch (Exception ex)
             {
                 _logger.LogWarning(ex.Message);
-                throw new CustomeNotFoundException("Data not found.");
+                throw new Exception();
             }
         }
 
-        [HttpPost("Add", Name = "OrderAdd")]
-        public async Task<IActionResult> Add(OrderModel model)
+        [HttpPost("Post", Name = "OrderAdd")]
+        public async Task<IActionResult> Post([FromBody]OrderModel model)
         {
             try
             {
