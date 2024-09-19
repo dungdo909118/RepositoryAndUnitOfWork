@@ -14,5 +14,7 @@ namespace OM.Data.Repository.Implements
         {
 
         }
+
+        //TODO: you can add more method for only CustomerRepository here
     }
 }

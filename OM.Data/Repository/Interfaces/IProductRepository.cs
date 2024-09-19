@@ -10,6 +10,6 @@ namespace OM.Data.Repository.Interfaces
 {
     public interface IProductRepository : IRepository<OM.Data.Entities.Product>
     {
-       
+        //TODO: you can define more method for only Product here
     }
 }

@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace OM.Data.Repository.Interfaces
 {
+
+    /// <summary>
+    /// This is only a demo, we can create many UnitOfWork, depend on your tables...
+    /// </summary>
     public interface IUnitOfWork
     {
         IProductRepository Products { get; }

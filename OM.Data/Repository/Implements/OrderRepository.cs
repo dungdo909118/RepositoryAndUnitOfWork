@@ -17,6 +17,10 @@ namespace OM.Data.Repository.Implements
             _oMDBContext = oMDBContext;
         }
 
+
+        //TODO: you can add more method for only OrderRepository here
+
+        // I need override this method, because I need to get more order detail to display.
         public override async Task<IEnumerable<OM.Data.Entities.Order>> GetAsync(int pageIndex, int pageSize)
         {
             return await _oMDBContext.Orders.Include(x => x.Orderdetails).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();

@@ -10,6 +10,6 @@ namespace OM.Data.Repository.Interfaces
 {
     public interface ICustomerRepository: IRepository<OM.Data.Entities.Customer>
     {
-       
+        //TODO: you can define more method for only Customer here
     }
 }

@@ -9,6 +9,6 @@ namespace OM.Data.Repository.Interfaces
 {
     public interface IOrderRepository : IRepository<OM.Data.Entities.Order>
     {
-       
+        //TODO: you can define more method for only Order here
     }
 }

@@ -1,4 +1,5 @@
 ﻿using OM.Business.Models;
+using OM.Core.Enum;
 using OM.Data.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -20,51 +21,49 @@ namespace OM.Business.Order
         {
             if (order != null)
             {
-                using (var transaction = _unitOfWork.BeginTransactionAsync())
+                await _unitOfWork.BeginTransactionAsync();
+
+                // 1. Save order
+                var orderEntity = new OM.Data.Entities.Order()
                 {
+                    CustomerId = order.CustomerId,
+                    OrderDate = order.OrderDate,
+                    Status = order.Status,
+                    TotalAmount = order.TotalAmount
+                };
+                var orderResult = await _unitOfWork.Orders.InsertAsync(orderEntity);
+                await _unitOfWork.SaveChangesAsync();
 
-                    // 1. Save order
-                    var orderEntity = new OM.Data.Entities.Order()
-                    {
-                        CustomerId = order.CustomerId,
-                        OrderDate = order.OrderDate,
-                        Status = order.Status,
-                        TotalAmount = order.TotalAmount
-                    };
-                    var orderResult = await _unitOfWork.Orders.InsertAsync(orderEntity);
-                    await _unitOfWork.SaveChangesAsync();
-
-                    if (order.Orderdetails == null || !order.Orderdetails.Any())
-                    {
-                        await _unitOfWork.RollbackAsync();
-                        return 0;
-                    }
-
-                    //2. save order detail
-                    var orderDetails = new List<OM.Data.Entities.Orderdetail>();
-                    foreach (var item in order.Orderdetails)
-                    {
-                        var orderDetailEntity = new OM.Data.Entities.Orderdetail()
-                        {
-                            OrderDetailId = item.OrderDetailId,
-                            OrderId = orderResult.OrderId,
-                            ProductId = item.ProductId,
-                            Quantity = item.Quantity,
-                            UnitPrice = item.UnitPrice
-                        };
-                        orderDetails.Add(orderDetailEntity);
-                    }
-
-                    foreach (var item in orderDetails)
-                    {
-                        var orderDetailResult = await _unitOfWork.OrderDetail.InsertAsync(item);
-                        await _unitOfWork.SaveChangesAsync();
-                    }
-
-                    await _unitOfWork.CommitAsync();
+                if (order.Orderdetails == null || !order.Orderdetails.Any())
+                {
+                    await _unitOfWork.RollbackAsync();
+                    return (int)ResponseEnumType.Fail;
                 }
+
+                //2. save order detail
+                var orderDetails = new List<OM.Data.Entities.Orderdetail>();
+                foreach (var item in order.Orderdetails)
+                {
+                    var orderDetailEntity = new OM.Data.Entities.Orderdetail()
+                    {
+                        OrderDetailId = item.OrderDetailId,
+                        OrderId = orderResult.OrderId,
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity,
+                        UnitPrice = item.UnitPrice
+                    };
+                    orderDetails.Add(orderDetailEntity);
+                }
+
+                foreach (var item in orderDetails)
+                {
+                    var orderDetailResult = await _unitOfWork.OrderDetail.InsertAsync(item);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+                await _unitOfWork.CommitAsync();
             }
-            return 1;
+            return (int)ResponseEnumType.Sucess;
         }
 
         public async Task<IEnumerable<OrderModel>> GetAll(int pageIndex, int pageSize)
